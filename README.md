@@ -25,8 +25,15 @@ This calculator supports:
 - [X] Unary operators (only `+,-`)
 - [X] Parentheses
 - [X] Operators order (left -> right for `+,-,*,/`)
-- [X] `1 / 0 == ERROR` (not `infinity` due to `BigDecimal`)
-- [ ] `1 / (1 / 0) == 0`
+- [X] `1 / 0 == Infinity`
+- [X] `1 / (1 / 0) == 0`
+
+## Why i don't use `BigDecimal`
+***
+We don't need precision due to task, but i really want two end cases to work properly.
+Now we have `Double` in calculations and in all code overall 
+except the part where we need to round values and trim trailing zeroes
+\- here I used `BigDecimal`.
 
 ## Contacts
 ***
