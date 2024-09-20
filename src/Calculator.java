@@ -2,13 +2,50 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
 
+/**
+ * The {@code Calculator} class provides functionality to evaluate arithmetic expressions.
+ * It supports basic operations such as addition, subtraction, multiplication, and division,
+ * along with handling parentheses and unary operators.
+ *
+ * <p>This class utilizes Java 22 features, including enhanced switch expressions and improved
+ * exception handling mechanisms. It also demonstrates the use of {@code ArrayDeque} for
+ * efficient stack operations.</p>
+ *
+ * <p>Usage Example:</p>
+ * <pre>{@code
+ * Calculator calculator = new Calculator();
+ * String equation = "3 + 4 * (2 - 1)";
+ * String result = calculator.display(equation);
+ * System.out.println(result); // Outputs: 7
+ * }</pre>
+ *
+ * @author <a href="https://github.com/skirt-owner">skirt-owner</a>
+ * @version 1.0
+ * @since 2024-09-20
+ */
 public class Calculator {
-    // Helper method to check if a token is an operator
+
+    /**
+     * Checks if the given character token is a supported operator.
+     *
+     * <p>Supported operators are: '+', '-', '*', '/'.</p>
+     *
+     * @param token the character to check
+     * @return {@code true} if the token is an operator; {@code false} otherwise
+     */
     private static boolean isOperator(Character token) {
-        return (token == '+') ||( token == '-') || (token == '*') || (token == '/');
+        return (token == '+') || (token == '-') || (token == '*') || (token == '/');
     }
 
-    // Determine order of operations
+    /**
+     * Determines the precedence order of the given operator.
+     *
+     * <p>Operators '*' and '/' have higher precedence (2) compared to '+' and '-' (1).
+     * Any other character has a precedence of 0.</p>
+     *
+     * @param operator the operator character
+     * @return an integer representing the precedence order
+     */
     private static int orderOf(Character operator) {
         return switch (operator) {
             case '+', '-' -> 1;
@@ -17,23 +54,39 @@ public class Calculator {
         };
     }
 
-    // Perform the arithmetic operation
+    /**
+     * Performs the arithmetic operation based on the provided operator and operands.
+     *
+     * <p>If a division by zero is attempted, the method returns {@code Double.POSITIVE_INFINITY}.</p>
+     *
+     * @param operator the operator character ('+', '-', '*', '/')
+     * @param numberA  the first operand
+     * @param numberB  the second operand
+     * @return the result of the operation as a {@code Double}
+     */
     private static Double calculate(Character operator, Double numberA, Double numberB) {
         return switch (operator) {
             case '+' -> numberA + numberB;
             case '-' -> numberA - numberB;
             case '*' -> numberA * numberB;
             case '/' -> {
-                if (numberB.compareTo((double) 0) == 0) {
+                if (numberB.compareTo(0.0) == 0) {
                     yield Double.POSITIVE_INFINITY;
                 }
                 yield numberA / numberB;
             }
-            default -> (double) 0;
+            default -> 0.0;
         };
     }
 
-    // Pop and calculate the result for an operation
+    /**
+     * Pops the top operator from the operators stack and applies it to the top two numbers
+     * in the numbers stack. The result is then pushed back onto the numbers stack.
+     *
+     * @param operators the stack of operators
+     * @param numbers   the stack of numbers
+     * @throws IllegalArgumentException if the operator stack is empty or there are fewer than two numbers
+     */
     private static void prepare(ArrayDeque<Character> operators, ArrayDeque<Double> numbers) {
         if (operators.isEmpty() || numbers.size() < 2) {
             throw new IllegalArgumentException("Incorrect format of the initial equation");
@@ -44,18 +97,45 @@ public class Calculator {
         numbers.push(calculate(operator, numberA, numberB));
     }
 
+    /**
+     * Validates the input equation string.
+     *
+     * <p>The equation must not be {@code null}, blank, and should only contain digits,
+     * operators ('+', '-', '*', '/'), parentheses '(', ')', decimal points '.', and whitespace.</p>
+     *
+     * @param equation the input equation string
+     * @return {@code true} if the equation is valid; {@code false} otherwise
+     */
     private static boolean isValid(String equation) {
         return !(equation == null || equation.isBlank() || !equation.matches("^[0-9+\\-*/().\\s]+$"));
     }
 
+    /**
+     * Checks if the given character token is a digit or a decimal point.
+     *
+     * @param token the character to check
+     * @return {@code true} if the token is a digit or '.'; {@code false} otherwise
+     */
     private static boolean isDigit(Character token) {
         return Character.isDigit(token) || token == '.';
     }
 
-    // Method to display the result of the calculation
+    /**
+     * Evaluates the arithmetic expression provided as a string and returns the result.
+     *
+     * <p>The method handles operator precedence, parentheses, and unary operators.
+     * It returns the result rounded to two decimal places, removing any trailing zeros.</p>
+     *
+     * @param equation the arithmetic expression to evaluate
+     * @return the result of the evaluation as a {@code String}
+     * @throws IllegalArgumentException if the equation format is incorrect or contains invalid characters
+     */
     public String display(String equation) {
-        if (!isValid(equation)) throw new IllegalArgumentException("Incorrect equation format");
+        if (!isValid(equation)) {
+            throw new IllegalArgumentException("Incorrect equation format");
+        }
 
+        // Stacks for operators and numbers
         ArrayDeque<Character> operators = new ArrayDeque<>();
         ArrayDeque<Double> numbers = new ArrayDeque<>();
 
@@ -65,44 +145,60 @@ public class Calculator {
         for (int i = 0; i < length; ++i) {
             char token = equation.charAt(i);
 
+            // Skip whitespace characters
             if (Character.isWhitespace(token)) continue;
 
             if (token == '.' || Character.isDigit(token)) {
-                if (!(prevToken == null || prevToken == 'o' || prevToken == '(' || prevToken == 'u')){
+                // Validate token sequence for numbers
+                if (!(prevToken == null || prevToken == 'o' || prevToken == '(' || prevToken == 'u')) {
                     throw new IllegalArgumentException("Incorrect format of the initial equation");
                 }
                 StringBuilder numberBuilder = new StringBuilder();
 
                 int decimalPointCounter = 0;
-                while (i < length && (isDigit(equation.charAt(i)))) {
+                // Build the complete number (including decimal part if any)
+                while (i < length && isDigit(equation.charAt(i))) {
                     if (equation.charAt(i) == '.') decimalPointCounter++;
                     numberBuilder.append(equation.charAt(i++));
                 }
 
+                // Ensure only one decimal point is present
                 if (decimalPointCounter > 1) {
                     throw new IllegalArgumentException("Incorrect format of the initial equation");
                 }
 
                 String number = numberBuilder.toString();
-                numbers.push(Double.parseDouble(number.compareTo(".") == 0 ? "0.0" : number));
+                // Handle standalone decimal point
+                numbers.push(Double.parseDouble(number.equals(".") ? "0.0" : number));
                 prevToken = 'n';
-                i--;
+                i--; // Adjust index since it will be incremented in the loop
             } else if (token == '(') {
+                // Validate token sequence for parentheses
+                if (!(prevToken == null || prevToken == 'o' || prevToken == 'u')) {
+                    throw new IllegalArgumentException("Incorrect format of the initial equation");
+                }
                 operators.push(token);
                 prevToken = '(';
             } else if (token == ')') {
+                // Resolve all operators inside the parentheses
                 while (!operators.isEmpty() && operators.peek() != '(') {
                     prepare(operators, numbers);
                 }
-                operators.removeFirst();
+                if (operators.isEmpty()) {
+                    throw new IllegalArgumentException("Mismatched parentheses.");
+                }
+                operators.removeFirst(); // Remove the '('
                 prevToken = ')';
             } else if (isOperator(token)) {
-                boolean isUnary = ((prevToken == null) || (prevToken == '(') || (prevToken == 'o'));
+                // Determine if the operator is unary (e.g., -5)
+                boolean isUnary = (prevToken == null || prevToken == '(' || prevToken == 'o');
 
                 if (isUnary && (token == '-' || token == '+')) {
-                    numbers.push((double) 0);
+                    // For unary operators, push 0 and treat it as a binary operation
+                    numbers.push(0.0);
                     prevToken = 'u';
                 } else {
+                    // While the top operator has higher or equal precedence, apply it
                     while (!operators.isEmpty() && isOperator(operators.peek()) &&
                             orderOf(operators.peek()) >= orderOf(token)) {
                         prepare(operators, numbers);
@@ -111,10 +207,12 @@ public class Calculator {
                 }
                 operators.push(token);
             } else {
+                // Invalid character encountered
                 throw new IllegalArgumentException("Invalid character encountered: " + token);
             }
         }
 
+        // Apply remaining operators
         while (!operators.isEmpty()) {
             char op = operators.peek();
             if (op == '(' || op == ')') {
@@ -123,14 +221,26 @@ public class Calculator {
             prepare(operators, numbers);
         }
 
+        // The final result should be the only number left
         Double result = numbers.removeFirst();
-        if (result.isInfinite()) {
+        if (result.isInfinite() || result.isNaN()) {
             return result.toString();
         }
-        return BigDecimal.valueOf(result).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
+        // Format the result to two decimal places, removing trailing zeros
+        return BigDecimal.valueOf(result)
+                .setScale(2, RoundingMode.HALF_UP)
+                .stripTrailingZeros()
+                .toPlainString();
     }
 
-    // Main method to test the Calculator
+    /**
+     * The main method to test the {@code Calculator} class.
+     *
+     * <p>It accepts an arithmetic equation as a command-line argument and prints the result.
+     * If no argument is provided, it will prompt an error.</p>
+     *
+     * @param args command-line arguments where the first argument is the equation to evaluate
+     */
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
 
