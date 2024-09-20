@@ -18,29 +18,29 @@ public class Calculator {
     }
 
     // Perform the arithmetic operation
-    private static BigDecimal calculate(Character operator, BigDecimal numberA, BigDecimal numberB) {
+    private static Double calculate(Character operator, Double numberA, Double numberB) {
         return switch (operator) {
-            case '+' -> numberA.add(numberB);
-            case '-' -> numberA.subtract(numberB);
-            case '*' -> numberA.multiply(numberB);
+            case '+' -> numberA + numberB;
+            case '-' -> numberA - numberB;
+            case '*' -> numberA * numberB;
             case '/' -> {
-                if (numberB.compareTo(BigDecimal.ZERO) == 0) {
-                    throw new ArithmeticException("Can't divide by zero");
+                if (numberB.compareTo((double) 0) == 0) {
+                    yield Double.POSITIVE_INFINITY;
                 }
-                yield numberA.divide(numberB, 10, RoundingMode.HALF_UP);
+                yield numberA / numberB;
             }
-            default -> BigDecimal.ZERO;
+            default -> (double) 0;
         };
     }
 
     // Pop and calculate the result for an operation
-    private static void prepare(ArrayDeque<Character> operators, ArrayDeque<BigDecimal> numbers) {
+    private static void prepare(ArrayDeque<Character> operators, ArrayDeque<Double> numbers) {
         if (operators.isEmpty() || numbers.size() < 2) {
             throw new IllegalArgumentException("Incorrect format of the initial equation");
         }
         char operator = operators.removeFirst();
-        BigDecimal numberB = numbers.removeFirst();
-        BigDecimal numberA = numbers.removeFirst();
+        Double numberB = numbers.removeFirst();
+        Double numberA = numbers.removeFirst();
         numbers.push(calculate(operator, numberA, numberB));
     }
 
@@ -57,7 +57,7 @@ public class Calculator {
         if (!isValid(equation)) throw new IllegalArgumentException("Incorrect equation format");
 
         ArrayDeque<Character> operators = new ArrayDeque<>();
-        ArrayDeque<BigDecimal> numbers = new ArrayDeque<>();
+        ArrayDeque<Double> numbers = new ArrayDeque<>();
 
         int length = equation.length();
         Character prevToken = null;
@@ -84,7 +84,7 @@ public class Calculator {
                 }
 
                 String number = numberBuilder.toString();
-                numbers.push(new BigDecimal(number.compareTo(".") == 0 ? "0.0" : number));
+                numbers.push(Double.parseDouble(number.compareTo(".") == 0 ? "0.0" : number));
                 prevToken = 'n';
                 i--;
             } else if (token == '(') {
@@ -100,7 +100,7 @@ public class Calculator {
                 boolean isUnary = ((prevToken == null) || (prevToken == '(') || (prevToken == 'o'));
 
                 if (isUnary && (token == '-' || token == '+')) {
-                    numbers.push(BigDecimal.ZERO);
+                    numbers.push((double) 0);
                     prevToken = 'u';
                 } else {
                     while (!operators.isEmpty() && isOperator(operators.peek()) &&
@@ -123,7 +123,11 @@ public class Calculator {
             prepare(operators, numbers);
         }
 
-        return numbers.removeFirst().setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
+        Double result = numbers.removeFirst();
+        if (result.isInfinite()) {
+            return result.toString();
+        }
+        return BigDecimal.valueOf(result).setScale(2, RoundingMode.HALF_UP).stripTrailingZeros().toPlainString();
     }
 
     // Main method to test the Calculator
