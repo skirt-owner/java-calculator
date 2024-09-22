@@ -1,6 +1,7 @@
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
+import java.util.Scanner;
 
 /**
  * The {@code Calculator} class provides functionality to evaluate arithmetic expressions.
@@ -132,7 +133,7 @@ public class Calculator {
      */
     public String display(String equation) {
         if (!isValid(equation)) {
-            throw new IllegalArgumentException("Incorrect equation format");
+            throw new IllegalArgumentException("Incorrect format of the initial equation");
         }
 
         // Stacks for operators and numbers
@@ -151,7 +152,7 @@ public class Calculator {
             if (token == '.' || Character.isDigit(token)) {
                 // Validate token sequence for numbers
                 if (!(prevToken == null || prevToken == 'o' || prevToken == '(' || prevToken == 'u')) {
-                    throw new IllegalArgumentException("Incorrect format of the initial equation");
+                    throw new IllegalArgumentException("Incorrect format of the initial equation around number");
                 }
                 StringBuilder numberBuilder = new StringBuilder();
 
@@ -164,7 +165,7 @@ public class Calculator {
 
                 // Ensure only one decimal point is present
                 if (decimalPointCounter > 1) {
-                    throw new IllegalArgumentException("Incorrect format of the initial equation");
+                    throw new IllegalArgumentException("Incorrect format of the decimal number");
                 }
 
                 String number = numberBuilder.toString();
@@ -175,11 +176,14 @@ public class Calculator {
             } else if (token == '(') {
                 // Validate token sequence for parentheses
                 if (!(prevToken == null || prevToken == 'o' || prevToken == 'u')) {
-                    throw new IllegalArgumentException("Incorrect format of the initial equation");
+                    throw new IllegalArgumentException("Incorrect format of the initial equation  around '('");
                 }
                 operators.push(token);
                 prevToken = '(';
             } else if (token == ')') {
+                if (!(prevToken != null && prevToken == 'n')) {
+                    throw new IllegalArgumentException("Incorrect format of the initial equation around ')'");
+                }
                 // Resolve all operators inside the parentheses
                 while (!operators.isEmpty() && operators.peek() != '(') {
                     prepare(operators, numbers);
@@ -216,7 +220,7 @@ public class Calculator {
         while (!operators.isEmpty()) {
             char op = operators.peek();
             if (op == '(' || op == ')') {
-                throw new IllegalArgumentException("Mismatched parentheses.");
+                throw new IllegalArgumentException("Mismatched parentheses");
             }
             prepare(operators, numbers);
         }
@@ -244,7 +248,16 @@ public class Calculator {
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
 
-        String equation = args.length > 0 ? args[0] : null;
+        // Use Scanner as the primary input source
+        Scanner scanner = new Scanner(System.in);
+        // Read first line and remove any leading/trailing spaces
+        String equation = scanner.nextLine().trim();
+        scanner.close();
+
+        // Check if the Scanner input is invalid (empty or malformed)
+        if (equation.isEmpty() && args.length > 0) {
+            equation = args[0];
+        }
 
         try {
             String result = calculator.display(equation);
