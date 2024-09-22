@@ -12,9 +12,10 @@ git clone https://github.com/skirt-owner/java-calculator.git
 ```java 
 javac src/Calculator.java
 ```
-- Run it providing with `args` or `stdin`
+- Run it providing with `args` or `stdin`(optional)
 ```java
 java -classpath src Calculator "<your equation here>"
+<your equation here>
 ```
 
 ## What can you get here?
