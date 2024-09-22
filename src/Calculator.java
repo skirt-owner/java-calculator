@@ -248,15 +248,16 @@ public class Calculator {
     public static void main(String[] args) {
         Calculator calculator = new Calculator();
 
-        // Use Scanner as the primary input source
-        Scanner scanner = new Scanner(System.in);
-        // Read first line and remove any leading/trailing spaces
-        String equation = scanner.nextLine().trim();
-        scanner.close();
-
+        String equation;
         // Check if the Scanner input is invalid (empty or malformed)
-        if (equation.isEmpty() && args.length > 0) {
+        if (args.length > 0) {
             equation = args[0];
+        } else {
+            // Use Scanner as the primary input source
+            Scanner scanner = new Scanner(System.in);
+            // Read first line and remove any leading/trailing spaces
+            equation = scanner.nextLine().trim();
+            scanner.close();
         }
 
         try {
