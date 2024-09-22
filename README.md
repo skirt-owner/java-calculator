@@ -14,7 +14,11 @@ git clone https://github.com/skirt-owner/java-calculator.git
 ```java 
 javac src/Calculator.java
 ```
-- Run it providing with args (equation to solve)
+- Run it providing with `args` (equation to solve) or `stdin`
+```java
+java -classpath src Calculator "<your equation here>"
+```
+- or just run it
 ```java
 java -classpath src Calculator "<your equation here>"
 ```
