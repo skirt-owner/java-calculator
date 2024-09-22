@@ -181,7 +181,7 @@ public class Calculator {
                 operators.push(token);
                 prevToken = '(';
             } else if (token == ')') {
-                if (!(prevToken != null && prevToken == 'n')) {
+                if (!(prevToken != null && (prevToken == 'n' || prevToken == ')'))) {
                     throw new IllegalArgumentException("Incorrect format of the initial equation around ')'");
                 }
                 // Resolve all operators inside the parentheses
