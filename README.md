@@ -1,7 +1,7 @@
 # Calculator on Java
 
 ## Introduction
-Simple [java calculator](./src/Calculator.java) using `ArrayDeque`'s.
+Simple [Java Calculator](./src/Calculator.java) (click to go to the source code) using `ArrayDeque`'s.
 
 ## How to use
 - Download this repo
