@@ -3,28 +3,13 @@
 ## Introduction
 Simple [Java Calculator](./src/Calculator.java) (click to go to the source code) using `ArrayDeque`'s.
 
-## How to use
-- Download this repo
-```bash
-git clone https://github.com/skirt-owner/java-calculator.git
-```
-- Compile project
-```java 
-javac src/Calculator.java
-```
-- Run it providing with `args` or `stdin`(optional)
-```java
-java src.Calculator "<your equation here>"
-<OR your equation here>
-```
-
 ## What can you get here?
 This calculator supports:
-- [X] Unary operators (only `+,-`)
+- [X] Unary operators (only `-`) - '+' is not considered unary somehow
 - [X] Parentheses
 - [X] Operators order (left -> right for `+,-,*,/`)
-- [X] `1 / 0 == Infinity`
-- [X] `1 / (1 / 0) == 0`
+- [X] `1 / 0 == Error`
+- [X] but `1 / (1 / 0) == 0`
 
 ## Why i don't use `BigDecimal`
 We don't need precision due to task, but i really want two end cases to work properly.
