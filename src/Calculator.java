@@ -1,5 +1,3 @@
-package src;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayDeque;
@@ -133,7 +131,7 @@ public class Calculator {
      * @return the result of the evaluation as a {@code String}
      * @throws IllegalArgumentException if the equation format is incorrect or contains invalid characters
      */
-    public String display(String equation) {
+    public static Double display(String equation) {
         if (!isValid(equation)) {
             throw new IllegalArgumentException("Incorrect format of the initial equation");
         }
@@ -177,7 +175,7 @@ public class Calculator {
                 i--; // Adjust index since it will be incremented in the loop
             } else if (token == '(') {
                 // Validate token sequence for parentheses
-                if (!(prevToken == null || prevToken == 'o' || prevToken == 'u')) {
+                if (!(prevToken == null || prevToken == 'o' || prevToken == 'u' || prevToken == '(')) {
                     throw new IllegalArgumentException("Incorrect format of the initial equation  around '('");
                 }
                 operators.push(token);
@@ -199,7 +197,7 @@ public class Calculator {
                 // Determine if the operator is unary (e.g., -5)
                 boolean isUnary = (prevToken == null || prevToken == '(' || prevToken == 'o');
 
-                if (isUnary && (token == '-' || token == '+')) {
+                if (isUnary && (token == '-')) {
                     // For unary operators, push 0 and treat it as a binary operation
                     numbers.push(0.0);
                     prevToken = 'u';
@@ -230,13 +228,12 @@ public class Calculator {
         // The final result should be the only number left
         Double result = numbers.removeFirst();
         if (result.isInfinite() || result.isNaN()) {
-            return result.toString();
+            throw new ArithmeticException("Can't divide by zero");
         }
         // Format the result to two decimal places, removing trailing zeros
-        return BigDecimal.valueOf(result)
+        return Double.valueOf(BigDecimal.valueOf(result)
                 .setScale(2, RoundingMode.HALF_UP)
-                .stripTrailingZeros()
-                .toPlainString();
+                .stripTrailingZeros().toPlainString());
     }
 
     /**
@@ -248,8 +245,6 @@ public class Calculator {
      * @param args command-line arguments where the first argument is the equation to evaluate
      */
     public static void main(String[] args) {
-        Calculator calculator = new Calculator();
-
         String equation;
         // Check if the Scanner input is invalid (empty or malformed)
         if (args.length > 0) {
@@ -263,7 +258,7 @@ public class Calculator {
         }
 
         try {
-            String result = calculator.display(equation);
+            Double result = display(equation);
             System.out.println(result);
         } catch (IllegalArgumentException | ArithmeticException e) {
             System.out.println("Equation: " + equation + " --> Error: " + e.getMessage());
