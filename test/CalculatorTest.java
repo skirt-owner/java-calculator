@@ -10,13 +10,13 @@ public class CalculatorTest {
     @ParameterizedTest
     @MethodSource("provideValidTest")
     void testValidExpressions(String input, Double expectedOutput) {
-        Assertions.assertEquals(expectedOutput, Calculator.display(input));
+        Assertions.assertEquals(expectedOutput, Calculator.calculate(input));
     }
 
     @ParameterizedTest
     @MethodSource("provideInvalidTest")
     void testInvalidExpressions(String input) {
-        Assertions.assertThrows(Exception.class, () -> Calculator.display(input));
+        Assertions.assertThrows(Exception.class, () -> Calculator.calculate(input));
     }
 
     private static Stream<Arguments> provideValidTest() {

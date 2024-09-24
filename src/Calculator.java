@@ -16,7 +16,7 @@ import java.util.Scanner;
  * <pre>{@code
  * Calculator calculator = new Calculator();
  * String equation = "3 + 4 * (2 - 1)";
- * String result = calculator.display(equation);
+ * String result = calculator.calculate(equation);
  * System.out.println(result); // Outputs: 7
  * }</pre>
  *
@@ -65,7 +65,7 @@ public class Calculator {
      * @param numberB  the second operand
      * @return the result of the operation as a {@code Double}
      */
-    private static Double calculate(Character operator, Double numberA, Double numberB) {
+    private static Double getResultOf(Character operator, Double numberA, Double numberB) {
         return switch (operator) {
             case '+' -> numberA + numberB;
             case '-' -> numberA - numberB;
@@ -95,7 +95,7 @@ public class Calculator {
         char operator = operators.removeFirst();
         Double numberB = numbers.removeFirst();
         Double numberA = numbers.removeFirst();
-        numbers.push(calculate(operator, numberA, numberB));
+        numbers.push(getResultOf(operator, numberA, numberB));
     }
 
     /**
@@ -131,7 +131,7 @@ public class Calculator {
      * @return the result of the evaluation as a {@code String}
      * @throws IllegalArgumentException if the equation format is incorrect or contains invalid characters
      */
-    public static Double display(String equation) {
+    public static Double calculate(String equation) {
         if (!isValid(equation)) {
             throw new IllegalArgumentException("Incorrect format of the initial equation");
         }
@@ -258,7 +258,7 @@ public class Calculator {
         }
 
         try {
-            Double result = display(equation);
+            Double result = calculate(equation);
             System.out.println(result);
         } catch (IllegalArgumentException | ArithmeticException e) {
             System.out.println("Equation: " + equation + " --> Error: " + e.getMessage());
