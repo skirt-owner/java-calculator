@@ -14,8 +14,8 @@ javac src/Calculator.java
 ```
 - Run it providing with `args` or `stdin`(optional)
 ```java
-java -classpath src Calculator "<your equation here>"
-<your equation here>
+java src.Calculator <your equation here>
+<OR your equation here>
 ```
 
 ## What can you get here?
