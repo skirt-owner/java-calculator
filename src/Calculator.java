@@ -110,6 +110,30 @@ public class Calculator {
         numbers.push(getResultOf(operator, numberA, numberB));
     }
 
+
+    /**
+     * Check usage of operators.
+     *
+     * <p>Same operators should always be separated by whitespace.</p>
+     *
+     * @param equation the input equation string.
+     * @return {@code true} if usage of operators is correct; {@code false} otherwise
+     */
+    private static boolean checkOperatorsUsage(String equation) {
+        int length = equation.length();
+
+        for (int i = 0; i < length - 1; i++) {
+            char currentToken = equation.charAt(i);
+            char nextToken = equation.charAt(i + 1);
+
+            if (isOperator(currentToken) && isOperator(nextToken) && (currentToken == nextToken)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Validates the input equation string.
      *
@@ -251,7 +275,7 @@ public class Calculator {
      */
     private static Double formatResult(Double result) {
         // I like how BigDecimal has methods to trim number or round it.
-        // It's a simple project so i don't want to ignore it.
+        // It's a simple project, so I don't want to ignore it.
         return Double.valueOf(BigDecimal.valueOf(result)
                 .setScale(2, RoundingMode.HALF_UP)
                 .stripTrailingZeros().toPlainString());
@@ -270,6 +294,10 @@ public class Calculator {
     public static Double calculate(String equation) {
         if (!isValid(equation)) {
             throw new IllegalArgumentException("Incorrect format of the initial equation");
+        }
+
+        if (!checkOperatorsUsage(equation)) {
+            throw new IllegalArgumentException("Bad usage of operators: ++");
         }
 
         // Stacks for operators and numbers
@@ -318,10 +346,10 @@ public class Calculator {
                 }
                 processClosingParenthesis(operators, numbers);
                 state = ParsingState.CLOSE_PAREN;  // Update state after ')'
-            } else if (token == '-' && (state == ParsingState.START || state == ParsingState.OPEN_PAREN ||
+            } else if ((token == '-' || token == '+') && (state == ParsingState.START || state == ParsingState.OPEN_PAREN ||
                     state == ParsingState.OPERATOR)) {
-                // We do not want to ignore basic operator '-'
-                // So we check for its unary in main if statement
+                // We do not want to ignore basic operators '-+'
+                // So we check for its unary in main `if` statement
 
                 // Unary operator can be placed:
                 // 1. At the beginning of equation

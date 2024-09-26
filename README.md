@@ -5,7 +5,7 @@ Simple [Java Calculator](./src/Calculator.java) (click to go to the source code)
 
 ## What can you get here?
 This calculator supports:
-- [X] Unary operators (only `-`) - '+' is not considered unary somehow
+- [X] Unary operators (only `-+`)
 - [X] Parentheses
 - [X] Operators order (left -> right for `+,-,*,/`)
 - [X] `1 / 0 == Error`
