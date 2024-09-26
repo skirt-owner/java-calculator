@@ -8,8 +8,7 @@ import java.util.Scanner;
  * It supports basic operations such as addition, subtraction, multiplication, and division,
  * along with handling parentheses and unary operators.
  *
- * <p>This class utilizes Java 21 features, including enhanced switch expressions and improved
- * exception handling mechanisms. It also demonstrates the use of {@code ArrayDeque} for
+ * <p>It also demonstrates the use of {@code ArrayDeque} for
  * efficient stack operations.</p>
  *
  * <p>Usage Example:</p>
